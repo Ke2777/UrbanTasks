@@ -5,10 +5,7 @@ list_students.sort()
 result = {}
 
 for i in range(len(list_students)):
-    score_sum = 0
-    for a in range(len(grades[i])):
-        current_grade = grades[i]
-        score_sum += current_grade[a]
-    result[list_students[i]] = score_sum / len(grades[i])
+    current_grade = grades[i]
+    result[list_students[i]] = sum(current_grade) / len(current_grade)
     i += 1
 print(result)
