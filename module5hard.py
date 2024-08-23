@@ -34,15 +34,12 @@ class UrTube:
                 print("Пользователь не найден")
 
     def register(self, nickname: str, password: str, age: int):
-        login_valid = True
         for i in self.users:
             if i.nickname == nickname:
                 print(f"Пользователь {nickname} уже существует")
-                login_valid = False
-                break
-        if login_valid:
-            self.users.append(User(nickname, password, age))
-            self.log_in(nickname, password)
+                return
+        self.users.append(User(nickname, password, age))
+        self.log_in(nickname, password)
 
     def log_out(self):
         self.current_user = None
@@ -57,9 +54,11 @@ class UrTube:
                 self.videos.append(i)
 
     def get_videos(self, search_word: str):
+        found_videos = []
         for i in self.videos:
-            if i.title.lower().__contains__(search_word.lower()):
-                return i.title
+            if search_word.lower() in i.title.lower():
+                found_videos.append(i.title)
+        return found_videos
 
     def watch_video(self, title: str):
         if self.current_user:
@@ -71,6 +70,7 @@ class UrTube:
                             i.time_now += 1
                             print(i.time_now, end=' ')
                         print("Конец видео")
+                        i.time_now = 0
                     else:
                         print("Вам нет 18 лет, пожалуйста покиньте страницу")
         else:
