@@ -21,7 +21,7 @@ class Shop:
                 if str(product) in self.get_products():
                     print(f'Продукт {product} уже есть в магазине!')
                 else:
-                    f.write(str(product) + '\n')
+                    f.write('\n' + str(product))
 
 
 s1 = Shop()
