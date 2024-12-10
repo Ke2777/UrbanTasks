@@ -2,7 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import Message
 from aiogram.utils import executor
 
-API_TOKEN = '7360248683:AAHO3yjhUJbzh03kdyerUKJsCt0DTfy9Svk'
+API_TOKEN = ''
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
