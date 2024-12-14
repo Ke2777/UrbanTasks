@@ -1,16 +1,12 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import FSMContext
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.files import MemoryStorage
 from aiogram.dispatcher.filters.state import State, StatesGroup
-from aiogram.types import Message
-from aiogram.utils import executor
-from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher import FSMContext
+import asyncio
 
-API_TOKEN = '7360248683:AAElcUNNzBiDC-hv3rcsCjA7cH6y0zquQeY'
-
+API_TOKEN = ""
 bot = Bot(token=API_TOKEN)
-storage = MemoryStorage()
-dp = Dispatcher(bot, storage=storage)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
 
 class UserState(StatesGroup):
@@ -19,44 +15,39 @@ class UserState(StatesGroup):
     weight = State()
 
 
-@dp.message_handler(Text(equals="Calories", ignore_case=True))
-async def set_age(message: Message):
-    print("Команда 'Calories' получена.")
-    await message.answer("Введите свой возраст:")
+@dp.message_handler(commands=['start'])
+async def start(message):
+    await message.answer('Привет! Я бот помогающий твоему здоровью.')
+
+
+@dp.message_handler(text='Calories')
+async def set_age(message):
+    await message.answer('Введите свой возраст:')
     await UserState.age.set()
 
 
 @dp.message_handler(state=UserState.age)
-async def set_growth(message: Message, state: FSMContext):
-    print("Получен возраст:", message.text)
-    await state.update_data(age=message.text)
-    await message.answer("Введите свой рост:")
+async def set_growth(message, state):
+    await state.update_data(age=int(message.text))
+    await message.answer('Введите свой рост:')
     await UserState.growth.set()
 
 
 @dp.message_handler(state=UserState.growth)
-async def set_weight(message: Message, state: FSMContext):
-    print("Получен рост:", message.text)
-    await state.update_data(growth=message.text)
-    await message.answer("Введите свой вес:")
+async def set_weight(message, state):
+    await state.update_data(growth=int(message.text))
+    await message.answer('Введите свой вес:')
     await UserState.weight.set()
 
 
 @dp.message_handler(state=UserState.weight)
-async def send_calories(message: Message, state: FSMContext):
-    print("Получен вес:", message.text)
-    await state.update_data(weight=message.text)
-
+async def send_calories(message, state):
+    await state.update_data(weight=int(message.text))
     data = await state.get_data()
-    age = int(data["age"])
-    growth = int(data["growth"])
-    weight = int(data["weight"])
-
-    calories = 10 * weight + 6.25 * growth - 5 * age + 5
-    await message.answer(f"Ваша норма калорий: {calories:.2f} ккал/день.")
-    await state.finish()
+    bmr = (10 * data['weight']) + (6.25 * data['growth']) - (5 * data['age']) + 5
+    await message.answer(f'Ваша норма по  количеству калорий в сутки: {bmr}')
+    state.finish()
 
 
 if __name__ == '__main__':
-    print("Bot is running...")
     executor.start_polling(dp, skip_updates=True)
