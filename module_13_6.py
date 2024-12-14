@@ -5,8 +5,8 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-api_token = "7360248683:AAElcUNNzBiDC-hv3rcsCjA7cH6y0zquQeY"
-health_bot = Bot(token=api_token)
+API_TOKEN = ""
+health_bot = Bot(token=API_TOKEN)
 dispatcher = Dispatcher(health_bot, storage=MemoryStorage())
 
 main_menu = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -33,7 +33,7 @@ class UserInput(StatesGroup):
 
 @dispatcher.message_handler(commands=["start"])
 async def start_conversation(message: types.Message):
-    await message.answer("Привет! Я бот помогающий твоему здоровью.", reply_markup=main_menu)
+    await message.answer("Привет! Я бот, помогающий твоему здоровью.", reply_markup=main_menu)
 
 
 @dispatcher.message_handler(text="Рассчитать")
@@ -74,6 +74,11 @@ async def calculate_calories(message: types.Message, state: FSMContext):
     calorie_norm = (10 * user_data["weight"]) + (6.25 * user_data["height"]) - (5 * user_data["age"]) + 5
     await message.answer(f"Ваша норма по количеству калорий в сутки: {calorie_norm}")
     await state.finish()
+
+
+@dispatcher.message_handler()
+async def all_messages(message: types.Message):
+    await message.answer("Извините, я не понял вашего запроса. Пожалуйста, используйте меню для взаимодействия со мной.", reply_markup=main_menu)
 
 
 if __name__ == "__main__":
