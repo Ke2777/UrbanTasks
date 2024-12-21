@@ -7,7 +7,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from crud_functions import initiate_db, fill_products, get_all_products
 import sqlite3
 
-API_TOKEN = "7360248683:AAElcUNNzBiDC-hv3rcsCjA7cH6y0zquQeY"
+API_TOKEN = ""
 health_bot = Bot(token=API_TOKEN)
 dispatcher = Dispatcher(health_bot, storage=MemoryStorage())
 
